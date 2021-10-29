@@ -1,6 +1,7 @@
 
 //include express module or package
 const express = require('express');
+
 //create instance of express
 const app = express();
 
@@ -35,16 +36,24 @@ const typeDefs = require('./schema');
 // create resolver functions for Query schema
 const resolvers = require('./resolvers');
 
+const models = require('./models');
+
+
 
 let apolloServer = null;
 async function startServer() {
     apolloServer = new ApolloServer({
         typeDefs,
         resolvers,
+        context: () => {
+           return { models };
+        }
     });
     await apolloServer.start();
     apolloServer.applyMiddleware({ app , path: '/api' });
 }
+
+
 startServer();
 // const httpserver = http.createServer(app);
 
@@ -53,7 +62,7 @@ app.get("/", function (req, res) {
 });
 
 app.listen(4000, function () {
-    console.log(`server running on port 4000`);
+    console.log(`listen server running on port 4000`);
     console.log(`gql path is ${apolloServer.graphqlPath}`);
 });
 
