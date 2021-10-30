@@ -40,13 +40,40 @@ const models = require('./models');
 
 
 
+const jwt = require('jsonwebtoken');
+// get the user info from a JWT
+const getUser = token => {
+    if (token) {
+        try {
+            // return the user information from the token
+            const verified =  jwt.verify(token, process.env.JWT_SECRET);
+
+            return verified;
+        } catch (err) {
+            console.log('WE HAVE ERROR:')
+            console.log(err)
+            // if there's a problem with the token, throw an error
+            throw new Error('Session invalid');
+        }
+    }
+};  
+
+
 let apolloServer = null;
 async function startServer() {
     apolloServer = new ApolloServer({
         typeDefs,
         resolvers,
-        context: () => {
-           return { models };
+        context: ({ req }) => {
+           // get the user token from the headers
+            const token = req.headers.authorization;
+            // console.log(token);
+            // try to retrieve a user with the token
+            const user = getUser(token);
+            // for now, let's log the user to the console:
+            console.log(user);
+            // add the db models and the user to the context
+            return { models, user };
         }
     });
     await apolloServer.start();
