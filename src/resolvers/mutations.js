@@ -31,11 +31,11 @@ module.exports = {
         );
     },
     deleteBook: async (parent, { id }, { models }) => {
-        try {
-            await models.Book.findOneAndRemove({ _id: id});
-            return true;
-        } catch (err) {
-            return false;
-        }
-       },
+    try {
+        await models.Book.findOneAndRemove({ _id: id});
+        return true;
+    } catch (err) {
+        return false;
+    }
+   },
 }
